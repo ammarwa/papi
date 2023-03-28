@@ -725,6 +725,18 @@ CFLAGS
 CC
 NEC
 MIC
+HAVE_PERFWORKS_LIB
+HAVE_PERFWORKS_INC
+WITH_PERFWORKS_LIB
+WITH_PERFWORKS_INC
+HAVE_CUPTI_LIB
+HAVE_CUPTI_INC
+WITH_CUPTI_LIB
+WITH_CUPTI_INC
+HAVE_CUDA_LIB
+HAVE_CUDA_INC
+WITH_CUDA_LIB
+WITH_CUDA_INC
 target_alias
 host_alias
 build_alias
@@ -766,6 +778,15 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+with_cuda_inc
+with_cuda_lib
+with_cuda
+with_cupti_inc
+with_cupti_lib
+with_cupti
+with_perfworks_inc
+with_perfworks_lib
+with_perfworks
 with_arch
 with_bitmode
 with_OS
@@ -1439,6 +1460,27 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-cuda-inc=[PATH]  Path to the cuda runtime include header. Default if
+                          not given is $PAPI_CUDA_ROOT/include.
+  --with-cuda-lib=[PATH]  Path to the cuda runtime library. Default if not
+                          given is $PAPI_CUDA_ROOT/lib64.
+  --with-cuda=[PATH]      Path to the cuda runtime library installation.
+                          Default if not given is $PAPI_CUDA_ROOT.
+  --with-cupti-inc=[PATH] Path to the cupti profiling include header. Default
+                          if not given is
+                          $PAPI_CUDA_ROOT/extras/CUPTI/include.
+  --with-cupti-lib=[PATH] Path to cupti profiling library. Default if not
+                          given is $PAPI_CUDA_ROOT/extras/CUPTI/lib64.
+  --with-cupti=[PATH]     Path to the cupti profiling library. Default if not
+                          given is $PAPI_CUDA_ROOT/extras/CUPTI.
+  --with-perfworks-inc=[PATH]
+                          Path to perfworks include header. Default if not
+                          given is $PAPI_CUDA_ROOT/extras/CUPTI/include.
+  --with-perfoworks-lib=[PATH]
+                          Path to perfworks library. Default if not given is
+                          $PAPI_CUDA_ROOT/extras/CUPTI/lib64.
+  --with-perfworks=[PATH] Path to perfworks library. Default if not given is
+                          $PAPI_CUDA_ROOT/extras/CUPTI/lib64.
   --with-arch=<arch>      Specify architecture (uname -m)
   --with-bitmode=<32,64>  Specify bit mode of library
   --with-OS=<os>          Specify operating system
@@ -2459,6 +2501,122 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
+
+
+# start of components/cuda/subconfigure.m4
+
+
+# Check whether --with-cuda-inc was given.
+if test "${with_cuda_inc+set}" = set; then :
+  withval=$with_cuda_inc;
+                WITH_CUDA_INC=$with_cuda_inc
+                HAVE_CUDA_INC=1
+
+fi
+
+
+
+# Check whether --with-cuda-lib was given.
+if test "${with_cuda_lib+set}" = set; then :
+  withval=$with_cuda_lib;
+                WITH_CUDA_LIB=$with_cuda_lib
+                HAVE_CUDA_LIB=1
+
+fi
+
+
+
+# Check whether --with-cuda was given.
+if test "${with_cuda+set}" = set; then :
+  withval=$with_cuda;
+                with_cuda=$with_cuda
+                WITH_CUDA_INC=$with_cuda/include
+                WITH_CUDA_LIB=$with_cuda/lib64
+                HAVE_CUDA_INC=1
+                HAVE_CUDA_LIB=1
+
+fi
+
+
+
+
+
+
+
+# Check whether --with-cupti-inc was given.
+if test "${with_cupti_inc+set}" = set; then :
+  withval=$with_cupti_inc;
+                WITH_CUPTI_INC=$with_cupti_inc
+                HAVE_CUPTI_INC=1
+
+fi
+
+
+
+# Check whether --with-cupti-lib was given.
+if test "${with_cupti_lib+set}" = set; then :
+  withval=$with_cupti_lib;
+                WITH_CUPTI_LIB=$with_cupti_lib
+                HAVE_CUPTI_LIB=1
+
+fi
+
+
+
+# Check whether --with-cupti was given.
+if test "${with_cupti+set}" = set; then :
+  withval=$with_cupti;
+                with_cupti=$with_cupti
+                WITH_CUPTI_INC=$with_cupti/include
+                WITH_CUPTI_LIB=$with_cupti/lib64
+                HAVE_CUPTI_INC=1
+                HAVE_CUPTI_LIB=1
+
+fi
+
+
+
+
+
+
+
+# Check whether --with-perfworks-inc was given.
+if test "${with_perfworks_inc+set}" = set; then :
+  withval=$with_perfworks_inc;
+                WITH_PERFWORKS_INC=$with_perfworks_inc
+                HAVE_PERFWORKS_INC=1
+
+fi
+
+
+
+# Check whether --with-perfworks-lib was given.
+if test "${with_perfworks_lib+set}" = set; then :
+  withval=$with_perfworks_lib;
+                WITH_PERFWORKS_LIB=$with_perfworks_lib
+                HAVE_PERFWORKS_LIB=1
+
+fi
+
+
+
+# Check whether --with-perfworks was given.
+if test "${with_perfworks+set}" = set; then :
+  withval=$with_perfworks;
+                with_perfworks=$with_perfworks
+                WITH_PERFWORKS_INC=$with_perfworks/include
+                WITH_PERFWORKS_LIB=$with_perfworks/lib64
+                HAVE_PERFWORKS_INC=1
+                HAVE_PERFWORKS_LIB=1
+
+fi
+
+
+
+
+
+
+# end of components/cuda/subconfigure.m4
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for architecture" >&5
@@ -7306,6 +7464,8 @@ ac_config_files="$ac_config_files Makefile papi.pc"
 
 ac_config_files="$ac_config_files components/Makefile_comp_tests.target testlib/Makefile.target utils/Makefile.target ctests/Makefile.target ftests/Makefile.target validation_tests/Makefile.target"
 
+ac_config_files="$ac_config_files components/cuda/cuda_config.h"
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -8010,6 +8170,7 @@ do
     "ctests/Makefile.target") CONFIG_FILES="$CONFIG_FILES ctests/Makefile.target" ;;
     "ftests/Makefile.target") CONFIG_FILES="$CONFIG_FILES ftests/Makefile.target" ;;
     "validation_tests/Makefile.target") CONFIG_FILES="$CONFIG_FILES validation_tests/Makefile.target" ;;
+    "components/cuda/cuda_config.h") CONFIG_FILES="$CONFIG_FILES components/cuda/cuda_config.h" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

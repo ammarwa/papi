@@ -35,6 +35,8 @@ AC_DEFUN([AS_AC_EXPAND],
           prefix=$prefix_save
           exec_prefix=$exec_prefix_save ])
 
+m4_include([components/cuda/subconfigure.m4])
+
 AC_MSG_CHECKING(for architecture)
 AC_ARG_WITH([arch],
             [AS_HELP_STRING([--with-arch=<arch>],
@@ -2191,6 +2193,7 @@ AC_SUBST([ENABLE_FORTRAN_TESTS])
 AC_MSG_NOTICE($FILENAME will be included in the generated Makefile)
 AC_CONFIG_FILES([Makefile papi.pc])
 AC_CONFIG_FILES([components/Makefile_comp_tests.target testlib/Makefile.target utils/Makefile.target ctests/Makefile.target ftests/Makefile.target validation_tests/Makefile.target])
+AC_CONFIG_FILES([components/cuda/cuda_config.h])
 AC_OUTPUT
 
 if test "$have_paranoid" = "yes"; then

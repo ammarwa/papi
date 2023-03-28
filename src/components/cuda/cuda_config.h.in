@@ -1,0 +1,64 @@
+/*
+ * This file is generated at configure time do not edit
+ */
+
+#ifndef __CUDA_CONFIG_H__
+#define __CUDA_CONFIG_H__
+
+#if HAVE_CUDA_INC == 1
+#include "@WITH_CUDA_INC@/cuda.h"
+#include "@WITH_CUDA_INC@/cuda_runtime_api.h"
+#else
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#endif /* End of CUDA_INC */
+
+#if HAVE_CUDA_LIB == 1
+#define CUDA_DLOPEN_PATH    "@WITH_CUDA_LIB@/stubs"
+#define CUDART_DLOPEN_PATH  "@WITH_CUDA_LIB@"
+#else
+#define CUDA_DLOPEN_PATH    ""
+#define CUDART_DLOPEN_PATH  ""
+#endif
+
+#if HAVE_CUPTI_INC == 1
+#include "@WITH_CUPTI_INC@/cupti.h"
+#if CUPTI_API_VERSION >= 13
+#include "@WITH_CUPTI_INC@/cupti_target.h"
+#include "@WITH_CUPTI_INC@/cupti_profiler_target.h"
+#endif
+#else
+#include <cupti.h>
+#if CUPTI_API_VERSION >= 13
+#include <cupti_target.h>
+#include <cupti_profiler_target.h>
+#endif
+#endif /* End of CUPTI_INC */
+
+#if HAVE_CUPTI_LIB == 1
+#define CUPTI_DLOPEN_PATH  "@WITH_CUPTI_LIB@"
+#else
+#define CUPTI_DLOPEN_PATH  ""
+#endif
+
+#if HAVE_PERFWORKS_INC == 1
+#if CUPTI_API_VERSION >= 13
+#include "@WITH_PERFWORKS_INC@/nvperf_host.h"
+#include "@WITH_PERFWORKS_INC@/nvperf_cuda_host.h"
+#include "@WITH_PERFWORKS_INC@/nvperf_target.h"
+#endif
+#else
+#if CUPTI_API_VERSION >= 13
+#include <nvperf_host.h>
+#include <nvperf_cuda_host.h>
+#include <nvperf_target.h>
+#endif
+#endif /* End of PERFWORKS_INC */
+
+#if HAVE_PERFWORKS_LIB == 1
+#define PERFWORKS_DLOPEN_PATH  "@WITH_PERFWORKS_LIB@"
+#else
+#define PERFWORKS_DLOPEN_PATH  ""
+#endif
+
+#endif /* End of __CUDA_CONFIG_H__ */

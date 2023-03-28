@@ -54,12 +54,6 @@ PAPI_CUDA_ROOT ?= /opt/cuda
 # A Linux system will also search for libraries by default in the directories
 # listed by /etc/ld.so.conf, and /usr/lib64, /lib64, /usr/lib, /lib. 
 
-# OVERRIDES: These are by default empty strings (""), if set they must work.
-PAPI_CUDA_MAIN = \"\"
-PAPI_CUDA_RUNTIME = \"\"
-PAPI_CUDA_CUPTI = \"\"
-PAPI_CUDA_PERFWORKS = \"\"
-
 # An example of an override:
 # PAPI_CUDA_CUPTI = \"$(PAPI_CUDA_ROOT)/extras/CUPTI/lib64/libcupti.so\"
 

@@ -31,19 +31,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-// NOTE: We can't use extended directories; these include files have includes.
-#include <cupti.h>
-#include <cuda_runtime_api.h>
-
-#include <cuda.h>
-
-#if CUPTI_API_VERSION >= 13
-#include <cupti_target.h>
-#include <cupti_profiler_target.h>
-#include <nvperf_host.h>
-#include <nvperf_cuda_host.h>
-#include <nvperf_target.h>
-#endif 
+#include "cuda_config.h"
 
 #include "papi.h"
 #include "papi_memory.h"
@@ -247,13 +235,6 @@ static void *dl3 = NULL;
 
 #if CUPTI_API_VERSION >= 13
 static void *dl4 = NULL;
-#endif
-
-static char cuda_main[]=PAPI_CUDA_MAIN;
-static char cuda_runtime[]=PAPI_CUDA_RUNTIME;
-static char cuda_cupti[]=PAPI_CUDA_CUPTI;
-#if CUPTI_API_VERSION >= 13
-static char cuda_perfworks[]=PAPI_CUDA_PERFWORKS;
 #endif
 
 static int cuda_version=0;
@@ -750,11 +731,13 @@ static int _cuda_linkCudaLibraries(void)
     dl1 = NULL;                                                 // Ensure reset to NULL.
 
     // Step 1: Process override if given.
-    if (strlen(cuda_main) > 0) {                                // If override given, it has to work.
+    if (strlen(CUDA_DLOPEN_PATH) > 0) {                                // If override given, it has to work.
         int strErr;
-        dl1 = dlopen(cuda_main, RTLD_NOW | RTLD_GLOBAL);        // Try to open that path.
+        char tmp[PATH_MAX];
+        sprintf(tmp, "%s/libcuda.so", CUDA_DLOPEN_PATH);
+        dl1 = dlopen(tmp, RTLD_NOW | RTLD_GLOBAL);        // Try to open that path.
         if (dl1 == NULL) {
-            strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_MAIN override '%s' given in Rules.cuda not found.", cuda_main);
+            strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_MAIN override '%s' given in Rules.cuda not found.", tmp);
             _cuda_vector.cmp_info.disabled_reason[PAPI_MAX_STR_LEN-1]=0;
             if (strErr > PAPI_MAX_STR_LEN) HANDLE_STRING_ERROR;
             return(PAPI_ENOSUPP);   // Override given but not found.
@@ -807,10 +790,12 @@ static int _cuda_linkCudaLibraries(void)
     dl2 = NULL;                                 // Ensure reset to NULL.
 
     // Step 1: Process override if given.
-    if (strlen(cuda_runtime) > 0) {                                // If override given, it has to work.
-        dl2 = dlopen(cuda_runtime, RTLD_NOW | RTLD_GLOBAL);        // Try to open that path.
+    if (strlen(CUDART_DLOPEN_PATH) > 0) {                                // If override given, it has to work.
+        char tmp[PATH_MAX];
+        sprintf(tmp, "%s/libcudart.so", CUDART_DLOPEN_PATH);
+        dl2 = dlopen(tmp, RTLD_NOW | RTLD_GLOBAL);        // Try to open that path.
         if (dl2 == NULL) {
-            int strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_RUNTIME override '%s' given in Rules.cuda not found.", cuda_runtime);
+            int strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_RUNTIME override '%s' given in Rules.cuda not found.", tmp);
             _cuda_vector.cmp_info.disabled_reason[PAPI_MAX_STR_LEN-1]=0;
             if (strErr > PAPI_MAX_STR_LEN) HANDLE_STRING_ERROR;
             return(PAPI_ENOSUPP);   // Override given but not found.
@@ -851,10 +836,12 @@ static int _cuda_linkCudaLibraries(void)
     dl3 = NULL;                                                 // Ensure reset to NULL.
 
     // Step 1: Process override if given.
-    if (strlen(cuda_cupti) > 0) {                                       // If override given, it MUST work.
-        dl3 = dlopen(cuda_cupti, RTLD_NOW | RTLD_GLOBAL);               // Try to open that path.
+    if (strlen(CUPTI_DLOPEN_PATH) > 0) {                                       // If override given, it MUST work.
+        char tmp[PATH_MAX];
+        sprintf(tmp, "%s/libcupti.so", CUPTI_DLOPEN_PATH);
+        dl3 = dlopen(tmp, RTLD_NOW | RTLD_GLOBAL);               // Try to open that path.
         if (dl3 == NULL) {
-            int strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_CUPTI override '%s' given in Rules.cuda not found.", cuda_cupti);
+            int strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_CUPTI override '%s' given in Rules.cuda not found.", tmp);
             _cuda_vector.cmp_info.disabled_reason[PAPI_MAX_STR_LEN-1]=0;
             if (strErr > PAPI_MAX_STR_LEN) HANDLE_STRING_ERROR;
             return(PAPI_ENOSUPP);   // Override given but not found.
@@ -946,10 +933,12 @@ static int _cuda_linkCudaLibraries(void)
     dl4 = NULL;                                                 // Ensure reset to NULL.
 
     // Step 1: Process override if given.
-    if (strlen(cuda_perfworks) > 0) {                                       // If override given, it MUST work.
-        dl4 = dlopen(cuda_perfworks, RTLD_NOW | RTLD_GLOBAL);               // Try to open that path.
+    if (strlen(PERFWORKS_DLOPEN_PATH) > 0) {                                       // If override given, it MUST work.
+        char tmp[PATH_MAX];
+        sprintf(tmp, "%s/libnvperf_host.so", PERFWORKS_DLOPEN_PATH);
+        dl4 = dlopen(tmp, RTLD_NOW | RTLD_GLOBAL);               // Try to open that path.
         if (dl4 == NULL) {
-            int strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_PERFWORKS override '%s' given in Rules.cuda not found.", cuda_perfworks);
+            int strErr=snprintf(_cuda_vector.cmp_info.disabled_reason, PAPI_MAX_STR_LEN, "PAPI_CUDA_PERFWORKS override '%s' given in Rules.cuda not found.", tmp);
             _cuda_vector.cmp_info.disabled_reason[PAPI_MAX_STR_LEN-1]=0;
             if (strErr > PAPI_MAX_STR_LEN) HANDLE_STRING_ERROR;
             return(PAPI_ENOSUPP);   // Override given but not found.
