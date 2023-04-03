@@ -427,16 +427,13 @@ load_hsa_sym(void)
 {
     int papi_errno = PAPI_OK;
 
-    char pathname[PATH_MAX] = { 0 };
-    char *rocm_root = getenv("PAPI_ROCM_ROOT");
-    if (rocm_root == NULL) {
+    char *hsa_lib = getenv("HSA_LIB");
+    if (hsa_lib == NULL) {
         ROCP_REC_ERR_STR("Can't load libhsa-runtime64.so, PAPI_ROCM_ROOT not set.");
         goto fn_fail;
     }
 
-    sprintf(pathname, "%s/lib/libhsa-runtime64.so", rocm_root);
-
-    hsa_dlp = dlopen(pathname, RTLD_NOW | RTLD_GLOBAL);
+    hsa_dlp = dlopen(hsa_lib, RTLD_NOW | RTLD_GLOBAL);
     if (hsa_dlp == NULL) {
         ROCP_REC_ERR_STR(dlerror());
         goto fn_fail;
@@ -495,14 +492,14 @@ load_rocp_sym(void)
 {
     int papi_errno = PAPI_OK;
 
-    char *pathname = getenv("HSA_TOOLS_LIB");
-    if (pathname == NULL) {
+    char *rocp_lib = getenv("HSA_TOOLS_LIB");
+    if (rocp_lib == NULL) {
         ROCP_REC_ERR_STR("Can't load librocprofiler64.so, neither PAPI_ROCM_ROOT "
                          " nor HSA_TOOLS_LIB are set.");
         goto fn_fail;
     }
 
-    rocp_dlp = dlopen(pathname, RTLD_NOW | RTLD_GLOBAL);
+    rocp_dlp = dlopen(rocp_lib, RTLD_NOW | RTLD_GLOBAL);
     if (rocp_dlp == NULL) {
         ROCP_REC_ERR_STR(dlerror());
         goto fn_fail;
@@ -650,12 +647,13 @@ init_rocp_env(void)
     rocm_prof_mode = (rocp_mode != NULL) ?
         atoi(rocp_mode) : ROCM_PROFILE_SAMPLING_MODE;
 
-    char pathname[PATH_MAX];
+    char pathname[PATH_MAX] = "libhsa-runtime64.so";
     char *rocm_root = getenv("PAPI_ROCM_ROOT");
-    if (rocm_root == NULL) {
-        ROCP_REC_ERR_STR("Can't set HSA_TOOLS_LIB. PAPI_ROCM_ROOT not set.");
-        return PAPI_EMISC;
+    if (rocm_root) {
+        sprintf(pathname, "%s/lib/libhsa-runtime64.so", rocm_root);
     }
+
+    setenv("HSA_LIB", pathname, 1);
 
     int err;
     int override_hsa_tools_lib = 1;
@@ -671,17 +669,21 @@ init_rocp_env(void)
     if (override_hsa_tools_lib) {
         /* Account for change of librocprofiler64.so file location in rocm-5.2.0
          * directory structure */
-        sprintf(pathname, "%s/lib/librocprofiler64.so", rocm_root);
-
-        err = stat(pathname, &stat_info);
-        if (err < 0) {
-            sprintf(pathname, "%s/rocprofiler/lib/libprofiler64.so", rocm_root);
+        strcpy(pathname, "librocprofiler64.so");
+        if (rocm_root) {
+            sprintf(pathname, "%s/lib/librocprofiler64.so", rocm_root);
 
             err = stat(pathname, &stat_info);
             if (err < 0) {
-                ROCP_REC_ERR_STR("Rocprofiler librocprofiler64.so file not "
-                                 "found.");
-                return PAPI_EMISC;
+
+                sprintf(pathname, "%s/rocprofiler/lib/libprofiler64.so", rocm_root);
+
+                err = stat(pathname, &stat_info);
+                if (err < 0) {
+                    ROCP_REC_ERR_STR("Rocprofiler librocprofiler64.so file not "
+                                     "found.");
+                    return PAPI_EMISC;
+                }
             }
         }
 
@@ -700,17 +702,22 @@ init_rocp_env(void)
     if (override_rocp_metrics) {
         /* Account for change of metrics file location in rocm-5.2.0
          * directory structure */
-        sprintf(pathname, "%s/lib/rocprofiler/metrics.xml", rocm_root);
-
-        err = stat(pathname, &stat_info);
-        if (err < 0) {
-            sprintf(pathname, "%s/rocprofiler/lib/metrics.xml", rocm_root);
+        if (rocm_root) {
+            sprintf(pathname, "%s/lib/rocprofiler/metrics.xml", rocm_root);
 
             err = stat(pathname, &stat_info);
             if (err < 0) {
-                ROCP_REC_ERR_STR("Rocprofiler metrics.xml file not found.");
-                return PAPI_EMISC;
+                sprintf(pathname, "%s/rocprofiler/lib/metrics.xml", rocm_root);
+
+                err = stat(pathname, &stat_info);
+                if (err < 0) {
+                    ROCP_REC_ERR_STR("Rocprofiler metrics.xml file not found.");
+                    return PAPI_EMISC;
+                }
             }
+        } else {
+            ROCP_REC_ERR_STR("Rocprofiler metrics.xml file not found.");
+            return PAPI_EMISC;
         }
 
         setenv("ROCP_METRICS", pathname, 1);
