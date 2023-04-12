@@ -269,7 +269,7 @@ int main( int argc, char **argv )
             exit(-1);    
         }
 
-       if (strcmp("cuda", aComponent->name) == 0) cid=i;                // If we found our match, record it.
+       if (strcmp("cuda_pw", aComponent->name) == 0) cid=i;                // If we found our match, record it.
     } // end search components.
 
     if (cid < 0) {                                                      // if no PCP component found,
@@ -290,8 +290,8 @@ int main( int argc, char **argv )
 //      "cuda:::metric:nvlink_total_data_transmitted",
 //      "cuda:::metric:nvlink_total_data_received",
         // CUPTI11 events.
-        "cuda:::dram__bytes_read.sum",
-        "cuda:::fe__cycles_elapsed.sum"
+        "cuda_pw:::dram__bytes_read.sum",
+        "cuda_pw:::fe__cycles_elapsed.sum"
     };
 
     // Add events at a GPU specific level ... eg cuda:::device:2:elapsed_cycles_sm

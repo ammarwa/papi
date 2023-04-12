@@ -195,13 +195,12 @@ int main(int argc, char** argv)
 
 	// retrieve the results from the device
 	cudaMemcpy(str, d_str, size, cudaMemcpyDeviceToHost);
-	
+
 	// free up the allocated memory on the device
 	cudaFree(d_str);
 	
 	if (!quiet) printf("END: %s\n", str);
 
-	
 #ifdef PAPI
 	retval = PAPI_stop( EventSet, values );
 	if( retval != PAPI_OK )
