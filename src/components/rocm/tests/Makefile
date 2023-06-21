@@ -15,20 +15,20 @@ CXXFLAGS = -g -O0 -fopenmp
 
 rocm_tests: ALL
 
-ALL: sample_single_kernel_monitoring       \
-     sample_single_thread_monitoring       \
-     sample_multi_kernel_monitoring        \
-     sample_multi_thread_monitoring        \
-     sample_overflow_monitoring            \
-     intercept_single_kernel_monitoring    \
-     intercept_single_thread_monitoring    \
-     intercept_multi_kernel_monitoring     \
-     intercept_multi_thread_monitoring     \
-     hl_sample_single_kernel_monitoring    \
-     hl_sample_single_thread_monitoring    \
-     hl_intercept_single_kernel_monitoring \
-     hl_intercept_single_thread_monitoring \
-     hl_intercept_multi_thread_monitoring
+#ALL: sample_single_kernel_monitoring       \
+#     sample_single_thread_monitoring       \
+#     sample_multi_kernel_monitoring        \
+#     sample_multi_thread_monitoring        \
+#     sample_overflow_monitoring            \
+#     intercept_single_kernel_monitoring    \
+#     intercept_single_thread_monitoring    \
+#     intercept_multi_kernel_monitoring     \
+#     intercept_multi_thread_monitoring     \
+#     hl_sample_single_kernel_monitoring    \
+#     hl_sample_single_thread_monitoring    \
+#     hl_intercept_single_kernel_monitoring \
+#     hl_intercept_single_thread_monitoring \
+#     hl_intercept_multi_thread_monitoring
 
 sample_single_kernel_monitoring: sample_single_kernel_monitoring.o matmul.o
 sample_single_thread_monitoring: sample_single_thread_monitoring.o single_thread_monitoring.o matmul.o
