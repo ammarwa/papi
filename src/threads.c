@@ -33,9 +33,7 @@ volatile ThreadInfo_t *_papi_hwi_thread_head;
 
 /* If we have TLS, this variable ALWAYS points to our thread descriptor. It's like magic! */
 
-#if defined(HAVE_THREAD_LOCAL_STORAGE)
 THREAD_LOCAL_STORAGE_KEYWORD ThreadInfo_t *_papi_hwi_my_thread;
-#endif
 
 /* Function that returns and unsigned long thread identifier */
 
