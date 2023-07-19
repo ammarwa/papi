@@ -29,7 +29,16 @@ rocd_init_environment(void)
 int
 rocd_init(void)
 {
-    int papi_errno = rocc_init();
+    int papi_errno;
+
+#ifndef ROCPROFILER_V1
+    papi_errno = rocp2_load_library();
+    if (papi_errno != PAPI_OK) {
+        return papi_errno;
+    }
+#endif
+
+    papi_errno = rocc_init();
     if (papi_errno != PAPI_OK) {
         return papi_errno;
     }

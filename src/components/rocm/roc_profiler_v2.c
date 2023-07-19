@@ -86,15 +86,15 @@ rocp2_init_environment(void)
     return PAPI_OK;
 }
 
+int rocp2_load_library(void)
+{
+    return load_rocp_sym();
+}
+
 int
 rocp2_init(void)
 {
     int papi_errno;
-
-    papi_errno = load_rocp_sym();
-    if (papi_errno != PAPI_OK) {
-        goto fn_fail;
-    }
 
     rocprofiler_status_t rocp_errno = rocp_init();
     if (rocp_errno != ROCPROFILER_STATUS_SUCCESS) {

@@ -5,6 +5,7 @@ typedef struct rocd_ctx *rocp_ctx_t;
 
 /* init and shutdown interfaces */
 int rocp2_init_environment(void);
+int rocp2_load_library(void);
 int rocp2_init(void);
 int rocp2_shutdown(void);
 
